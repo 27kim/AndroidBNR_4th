@@ -3,6 +3,7 @@ package com.d27.androidbnr_4th
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -15,6 +16,7 @@ class CheatActivity : AppCompatActivity() {
 
     private var answerIsTrue = false
     lateinit var answerTextView: TextView
+    lateinit var deviceApiTextView: TextView
     lateinit var showAnswerButton: Button
 
     private val cheatViewModel by lazy {
@@ -27,6 +29,8 @@ class CheatActivity : AppCompatActivity() {
 
         showAnswerButton = findViewById(R.id.show_answer_button)
         answerTextView = findViewById(R.id.answer_text_view)
+        deviceApiTextView = findViewById(R.id.deviceVersion)
+        deviceApiTextView.text = "API Level : ${Build.VERSION.SDK_INT}"
 
         answerIsTrue = intent.getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false)
         showAnswerButton.setOnClickListener {
