@@ -32,8 +32,12 @@ class CrimeListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
         recyclerView = view.findViewById(R.id.crime_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = CrimeAdapter(crimeListViewModel.crimes)
+        updateUI()
         return view
+    }
+
+    private fun updateUI() {
+        recyclerView.adapter = CrimeAdapter(crimeListViewModel.crimes)
     }
 
     companion object {
