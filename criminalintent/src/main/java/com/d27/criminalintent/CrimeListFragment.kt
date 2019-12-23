@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,10 +49,29 @@ class CrimeListFragment : Fragment() {
         }
     }
 
-    private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view) {
+    private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view),
+        View.OnClickListener {
+
+        private lateinit var crime: Crime
+
         val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
         val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(p0: View?) {
+            Toast.makeText(context, "${crime.title} pressed!", Toast.LENGTH_SHORT).show()
+        }
+
+        fun bind(crime: Crime) {
+            this.crime = crime
+            titleTextView.text = crime.title
+            dateTextView.text = crime.date.toString()
+        }
     }
+
 
     private inner class CrimeAdapter(var crimes: List<Crime>) :
         RecyclerView.Adapter<CrimeHolder>() {
@@ -60,14 +80,13 @@ class CrimeListFragment : Fragment() {
             val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
             return CrimeHolder(view)
         }
+
         override fun getItemCount(): Int {
             return crimes.size
         }
+
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            holder.apply {
-                titleTextView.text = crimes[position].title
-                dateTextView.text = crimes[position].date.toString()
-            }
+            holder.bind(crimes[position])
         }
 
     }
