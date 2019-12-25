@@ -10,6 +10,7 @@ class CrimeListViewModel : ViewModel(){
             val crime = Crime()
             crime.title = "Crime #$i"
             crime.isSolved = i %2 ==0
+            crime.viewType = i % 2
             crimes += crime
         }
     }
