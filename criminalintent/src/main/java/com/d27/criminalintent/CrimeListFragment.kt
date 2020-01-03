@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +27,7 @@ class CrimeListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "Total crimes : ${crimeListViewModel.crimes.size}")
+        Log.d(TAG, "Total crimes : ${crimeListViewModel.crimeListLiveData.value?.size}")
     }
 
     override fun onCreateView(
@@ -36,12 +38,28 @@ class CrimeListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
         recyclerView = view.findViewById(R.id.crime_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        updateUI()
+        //최초에는 데이터가 없기 때문에 빈 list 를 넘겨 줌
+        //liveData 로 변경했기 때문에 데이터가 들어오면 observer 통해 변경 예
+        recyclerView.adapter = CrimeAdapter(emptyList())
         return view
     }
 
-    private fun updateUI() {
-        recyclerView.adapter = CrimeAdapter(crimeListViewModel.crimes)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        crimeListViewModel.crimeListLiveData.observe(
+            viewLifecycleOwner,
+            Observer { crimes ->
+                crimes?.let {
+                    Log.i(TAG, "Got crimes ${crimes.size}")
+                    updateUI(crimes)
+                }
+
+            }
+        )
+    }
+
+    private fun updateUI(crimes: List<Crime>) {
+        recyclerView.adapter = CrimeAdapter(crimes)
     }
 
     companion object {
@@ -59,7 +77,7 @@ class CrimeListFragment : Fragment() {
 
         val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
         val dateTextView: TextView = itemView.findViewById(R.id.crime_date)
-        val solvedImageView : ImageView = itemView.findViewById(R.id.crime_solved)
+        val solvedImageView: ImageView = itemView.findViewById(R.id.crime_solved)
 
         init {
             itemView.setOnClickListener(this)
@@ -76,9 +94,9 @@ class CrimeListFragment : Fragment() {
             val simpleDateFormat = SimpleDateFormat(pattern)
             val date = simpleDateFormat.format(crime.date)
             dateTextView.text = date
-            solvedImageView.visibility = if(crime.isSolved){
+            solvedImageView.visibility = if (crime.isSolved) {
                 View.VISIBLE
-            }else{
+            } else {
                 View.GONE
             }
         }

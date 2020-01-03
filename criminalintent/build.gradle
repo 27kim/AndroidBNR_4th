@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
@@ -22,6 +23,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    kapt{
+        arguments{
+            arg("room.schemaLocation", "some/path")
+        }
+    }
 
 }
 
@@ -38,8 +44,9 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 
     //adding room
-    def room_version = "2.2.0-beta01"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version" // For Kotlin use kapt instead of annotationProcessor
+    implementation "android.arch.persistence.room:runtime:2.1.0"
+    kapt "android.arch.persistence.room:compiler:2.1.0"
+    //stetho
+    implementation 'com.facebook.stetho:stetho:1.5.1'
 
 }
