@@ -3,6 +3,7 @@ package com.d27.criminalintent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,12 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import java.util.*
+import androidx.lifecycle.Observer
+
+private const val ARG_CRIME_ID = "crime_id"
+private const val TAG = "CrimeFragment"
 
 class CrimeFragment :Fragment(){
 
@@ -18,9 +25,26 @@ class CrimeFragment :Fragment(){
     private lateinit var dateButton : Button
     private lateinit var solvedCheckBox : CheckBox
 
+    private val crimeDetailViewModel : CrimeDetailViewModel by lazy {
+        ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
+    }
+
+    fun newInstance(crime: UUID): CrimeFragment{
+
+        val args = Bundle().apply {
+            putSerializable(ARG_CRIME_ID, crime)
+        }
+        return CrimeFragment().apply {
+            arguments = args
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        crime = Crime()
+        val crimeId : UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
+        crimeDetailViewModel.loadCrime(crimeId)
+        Log.d(TAG, "args bundle crime ID : $crimeId")
     }
 
     override fun onCreateView(
@@ -33,11 +57,22 @@ class CrimeFragment :Fragment(){
         dateButton = view.findViewById(R.id.crime_date)
         solvedCheckBox = view.findViewById(R.id.crime_solved)
 
-        dateButton.apply {
-            text = crime.date.toString()
-            isEnabled = false
-        }
+//        dateButton.apply {
+//            text = crime.date.toString()
+//            isEnabled = false
+//        }
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        crimeDetailViewModel.crimeLiveData.observe(this,
+            Observer {
+                it?.let{
+                    this.crime = it
+                    updateUI(it)
+                }
+            })
     }
 
     override fun onStart() {
@@ -60,5 +95,11 @@ class CrimeFragment :Fragment(){
         solvedCheckBox.apply{
             setOnCheckedChangeListener { _, isChecked -> crime.isSolved = isChecked  }
         }
+    }
+
+    private fun updateUI(crime: Crime) {
+        titleFiled.setText(crime.title)
+        dateButton.text = crime.date.toString()
+        solvedCheckBox.isChecked = crime.isSolved
     }
 }

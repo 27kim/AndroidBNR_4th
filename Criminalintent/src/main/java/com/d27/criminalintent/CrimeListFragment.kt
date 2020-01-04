@@ -1,5 +1,6 @@
 package com.d27.criminalintent
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,20 +10,34 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.*
 
 class CrimeListFragment : Fragment() {
+
+    private var callbacks : Callbacks? = null
+    interface Callbacks{
+        fun onCrimeSelected(crime : UUID)
+    }
 
     lateinit var recyclerView: RecyclerView
 
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        callbacks = context as Callbacks
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,6 +99,9 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(p0: View?) {
+            callbacks?.let {
+                it.onCrimeSelected(crime.id)
+            }
             Toast.makeText(context, "${crime.title} pressed!", Toast.LENGTH_SHORT).show()
         }
 
