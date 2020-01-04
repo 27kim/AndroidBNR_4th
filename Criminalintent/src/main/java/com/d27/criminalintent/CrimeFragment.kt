@@ -100,6 +100,9 @@ class CrimeFragment :Fragment(){
     private fun updateUI(crime: Crime) {
         titleFiled.setText(crime.title)
         dateButton.text = crime.date.toString()
-        solvedCheckBox.isChecked = crime.isSolved
+        solvedCheckBox.apply {
+            isChecked = crime.isSolved
+            jumpDrawablesToCurrentState()
+        }
     }
 }
