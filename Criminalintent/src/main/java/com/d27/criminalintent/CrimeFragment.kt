@@ -97,6 +97,11 @@ class CrimeFragment :Fragment(){
         }
     }
 
+    override fun onStop() {
+        crimeDetailViewModel.saveCrime(crime)
+        super.onStop()
+    }
+
     private fun updateUI(crime: Crime) {
         titleFiled.setText(crime.title)
         dateButton.text = crime.date.toString()
