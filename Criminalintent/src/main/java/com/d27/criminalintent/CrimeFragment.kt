@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import java.util.*
@@ -17,8 +18,9 @@ import androidx.lifecycle.Observer
 
 private const val ARG_CRIME_ID = "crime_id"
 private const val TAG = "CrimeFragment"
+private const val DIALOG_DATE = "DialogDate"
 
-class CrimeFragment :Fragment(){
+class CrimeFragment :Fragment(), DatePickerFragment.DatePickerListener{
 
     private lateinit var crime: Crime
     private lateinit var titleFiled : EditText
@@ -57,10 +59,12 @@ class CrimeFragment :Fragment(){
         dateButton = view.findViewById(R.id.crime_date)
         solvedCheckBox = view.findViewById(R.id.crime_solved)
 
-//        dateButton.apply {
-//            text = crime.date.toString()
-//            isEnabled = false
-//        }
+        dateButton.setOnClickListener {
+            DatePickerFragment().apply {
+                setListener(this@CrimeFragment)
+                show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+            }
+        }
         return view
     }
 
@@ -109,5 +113,9 @@ class CrimeFragment :Fragment(){
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()
         }
+    }
+
+    override fun onDateSelected(y: Int, m: Int, d: Int) {
+        dateButton.text = "$y $m $d"
     }
 }
