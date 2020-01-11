@@ -19,8 +19,10 @@ import androidx.lifecycle.Observer
 private const val ARG_CRIME_ID = "crime_id"
 private const val TAG = "CrimeFragment"
 private const val DIALOG_DATE = "DialogDate"
+private const val REQUEST_DATE = 0
 
-class CrimeFragment :Fragment(), DatePickerFragment.DatePickerListener{
+class CrimeFragment :Fragment()
+, DatePickerFragment.Callbacks {
 
     private lateinit var crime: Crime
     private lateinit var titleFiled : EditText
@@ -60,8 +62,8 @@ class CrimeFragment :Fragment(), DatePickerFragment.DatePickerListener{
         solvedCheckBox = view.findViewById(R.id.crime_solved)
 
         dateButton.setOnClickListener {
-            DatePickerFragment().apply {
-                setListener(this@CrimeFragment)
+            DatePickerFragment.newInstance(crime.date).apply {
+                setTargetFragment(this@CrimeFragment, REQUEST_DATE)
                 show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
             }
         }
@@ -74,7 +76,7 @@ class CrimeFragment :Fragment(), DatePickerFragment.DatePickerListener{
             Observer {
                 it?.let{
                     this.crime = it
-                    updateUI(it)
+                    updateUI()
                 }
             })
     }
@@ -106,7 +108,7 @@ class CrimeFragment :Fragment(), DatePickerFragment.DatePickerListener{
         super.onStop()
     }
 
-    private fun updateUI(crime: Crime) {
+    private fun updateUI() {
         titleFiled.setText(crime.title)
         dateButton.text = crime.date.toString()
         solvedCheckBox.apply {
@@ -115,7 +117,8 @@ class CrimeFragment :Fragment(), DatePickerFragment.DatePickerListener{
         }
     }
 
-    override fun onDateSelected(y: Int, m: Int, d: Int) {
-        dateButton.text = "$y $m $d"
+    override fun onDateSelected(date: Date) {
+        crime.date = date
+        updateUI()
     }
 }
