@@ -3,9 +3,7 @@ package com.d27.criminalintent
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.fragment_crime_list.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,6 +29,11 @@ class CrimeListFragment : Fragment() {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         callbacks = context as Callbacks
@@ -40,6 +44,26 @@ class CrimeListFragment : Fragment() {
         callbacks = null
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_list, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.new_crime ->{
+                val crime = Crime()
+                crimeListViewModel.addCrime(crime)
+                callbacks?.let {
+                    it.onCrimeSelected(crime.id)
+                }
+                true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+
+
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,7 +84,7 @@ class CrimeListFragment : Fragment() {
             viewLifecycleOwner,
             Observer { crimes ->
                 crimes?.let {
-                    Log.i(TAG, "ㅇ ${crimes.size}")
+                    Log.i(TAG, "${crimes.size}")
                     updateUI(crimes)
                 }
 
@@ -69,6 +93,13 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateUI(crimes: List<Crime>) {
+        if(crimes.isNotEmpty()){
+            crime_recycler_view.visibility = View.VISIBLE
+            crime_text.visibility = View.GONE
+        }else{
+            crime_recycler_view.visibility = View.GONE
+            crime_text.visibility = View.VISIBLE
+        }
         recyclerView.adapter = CrimeAdapter(crimes)
     }
 
