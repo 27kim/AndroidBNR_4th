@@ -245,8 +245,6 @@ class CrimeFragment : Fragment()
                     crime_suspect.text = suspect
                 }
             }
-
-
         }
     }
 
