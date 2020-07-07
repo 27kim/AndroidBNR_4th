@@ -34,7 +34,6 @@ class CrimeFragment :Fragment()
     }
 
     fun newInstance(crime: UUID): CrimeFragment{
-
         val args = Bundle().apply {
             putSerializable(ARG_CRIME_ID, crime)
         }
@@ -61,12 +60,6 @@ class CrimeFragment :Fragment()
         dateButton = view.findViewById(R.id.crime_date)
         solvedCheckBox = view.findViewById(R.id.crime_solved)
 
-        dateButton.setOnClickListener {
-            DatePickerFragment.newInstance(crime.date).apply {
-                setTargetFragment(this@CrimeFragment, REQUEST_DATE)
-                show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
-            }
-        }
         return view
     }
 
@@ -100,6 +93,13 @@ class CrimeFragment :Fragment()
 
         solvedCheckBox.apply{
             setOnCheckedChangeListener { _, isChecked -> crime.isSolved = isChecked  }
+        }
+
+        dateButton.setOnClickListener {
+            DatePickerFragment.newInstance(crime.date).apply {
+                setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+                show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+            }
         }
     }
 

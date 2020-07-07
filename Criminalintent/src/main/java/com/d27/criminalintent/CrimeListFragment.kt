@@ -40,11 +40,6 @@ class CrimeListFragment : Fragment() {
         callbacks = null
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "Total crimes : ${crimeListViewModel.crimeListLiveData.value?.size}")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,7 +49,7 @@ class CrimeListFragment : Fragment() {
         recyclerView = view.findViewById(R.id.crime_recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         //최초에는 데이터가 없기 때문에 빈 list 를 넘겨 줌
-        //liveData 로 변경했기 때문에 데이터가 들어오면 observer 통해 변경 예
+        //liveData 로 변경했기 때문에 데이터가 들어오면 observer 통해 변경 예wㅓ
         recyclerView.adapter = CrimeAdapter(emptyList())
         return view
     }
@@ -65,7 +60,7 @@ class CrimeListFragment : Fragment() {
             viewLifecycleOwner,
             Observer { crimes ->
                 crimes?.let {
-                    Log.i(TAG, "Got crimes ${crimes.size}")
+                    Log.i(TAG, "ㅇ ${crimes.size}")
                     updateUI(crimes)
                 }
 
@@ -75,14 +70,6 @@ class CrimeListFragment : Fragment() {
 
     private fun updateUI(crimes: List<Crime>) {
         recyclerView.adapter = CrimeAdapter(crimes)
-    }
-
-    companion object {
-        const val TAG = "CrimeListFragment"
-
-        fun newInstance(): CrimeListFragment {
-            return CrimeListFragment()
-        }
     }
 
     private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view),
@@ -120,7 +107,6 @@ class CrimeListFragment : Fragment() {
         }
     }
 
-
     private inner class CrimeAdapter(var crimes: List<Crime>) :
         RecyclerView.Adapter<CrimeHolder>() {
 
@@ -136,6 +122,13 @@ class CrimeListFragment : Fragment() {
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             holder.bind(crimes[position])
         }
+    }
 
+    companion object {
+        const val TAG = "CrimeListFragment"
+
+        fun newInstance(): CrimeListFragment {
+            return CrimeListFragment()
+        }
     }
 }
