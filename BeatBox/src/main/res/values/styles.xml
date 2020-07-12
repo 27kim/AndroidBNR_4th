@@ -12,10 +12,11 @@
     </style>
 
     <style name="BeatBoxButton" parent="Widget.AppCompat.Button">
-        <item name="android:background">@color/dark_blue</item>
+        <item name="android:background">@drawable/button_beat_box</item>
     </style>
+    <!--        <item name="android:background">@color/dark_blue</item>-->
 
-<!--    <style name="BeatBoxButton.Strong">-->
-<!--        <item name="android:textStyle">bold</item>-->
-<!--    </style>-->
+    <!--    <style name="BeatBoxButton.Strong">-->
+    <!--        <item name="android:textStyle">bold</item>-->
+    <!--    </style>-->
 </resources>
