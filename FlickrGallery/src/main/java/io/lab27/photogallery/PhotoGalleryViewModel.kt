@@ -1,12 +1,31 @@
 package io.lab27.photogallery
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.app.DownloadManager
+import androidx.lifecycle.*
 
-class PhotoGalleryViewModel : ViewModel() {
-    val galleryItemLiveData : LiveData<List<GalleryItem>>
+class PhotoGalleryViewModel(private val app: Application) : AndroidViewModel(app) {
+    val galleryItemLiveData: LiveData<List<GalleryItem>>
 
-    init{
-        galleryItemLiveData = FlickrFetcher().searchPhotos("robot")
+    private val flickFetchr = FlickrFetcher()
+    private val mutableSearchTerm = MutableLiveData<String>()
+
+    val searchTerm: String
+        get() = mutableSearchTerm.value ?: ""
+
+    init {
+        mutableSearchTerm.value = QueryPreferences.getStoredQuery(app)
+        galleryItemLiveData = Transformations.switchMap(mutableSearchTerm) { searchTerm ->
+            if (searchTerm.isBlank()) {
+                flickFetchr.fetchPhotos()
+            } else {
+                flickFetchr.searchPhotos(searchTerm)
+            }
+        }
+    }
+
+    fun fetchPhotos(query: String = "") {
+        QueryPreferences.setStoredQuery(app, query)
+        mutableSearchTerm.value = query
     }
 }
