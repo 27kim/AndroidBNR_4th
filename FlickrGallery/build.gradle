@@ -48,6 +48,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    //
+    //preference
     implementation 'androidx.preference:preference:1.1.1'
+
+    //workManager
+    implementation "android.arch.work:work-runtime:1.0.1"
 }
